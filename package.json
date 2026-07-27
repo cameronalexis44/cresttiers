@@ -1,0 +1,10 @@
+# Supabase project settings (found in Project Settings > API)
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+# Service role key - server-only, bypasses Row Level Security.
+# Never expose this in client code or prefix it with NEXT_PUBLIC_.
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Secret code a signed-in user enters at /admin to grant themselves admin access.
+ADMIN_INVITE_CODE=
