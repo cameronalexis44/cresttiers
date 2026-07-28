@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { computeOverall } from "@/lib/scoring";
 import type { Tier } from "@/lib/constants";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const players = await prisma.player.findMany({
     orderBy: [{ ign: "asc" }],
