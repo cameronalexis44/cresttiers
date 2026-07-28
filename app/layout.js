@@ -3,6 +3,7 @@ import "./globals.css";
 export const metadata = {
   title: "CrestTiers",
   description: "A community PvP ranking board",
+  themeColor: "#3b82f6",
 };
 
 export default function RootLayout({ children }) {
