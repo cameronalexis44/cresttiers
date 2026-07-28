@@ -7,16 +7,22 @@
  *
  * Access requires BOTH:
  *   1. Being signed in via the existing magic-link email sign-in
- *   2. That signed-in email appearing in this list
+ *   2. That signed-in email appearing in this list OR in BUILTIN_ADMINS
  */
+
+// Always-on admins. These are granted access even if ADMIN_EMAILS is unset.
+const BUILTIN_ADMINS = ["brysonhooker7@gmail.com"];
+
 function parseAllowList(): Set<string> {
   const raw = process.env.ADMIN_EMAILS || "";
-  return new Set(
-    raw
-      .split(",")
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean)
-  );
+  const fromEnv = raw
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return new Set([
+    ...BUILTIN_ADMINS.map((e) => e.trim().toLowerCase()),
+    ...fromEnv,
+  ]);
 }
 
 export function isAdminEmail(email?: string | null): boolean {
