@@ -15,7 +15,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CrestTiers — Bedrock PvP Tier List",
+  title: "BPTIERS \u2014 Bedrock PvP Tier List",
   description:
     "Community-maintained Bedrock PvP tier rankings across Crystal, Sword, Mace, Axe, NethPot, UHC, SMP and more.",
 };
