@@ -1,17 +1,34 @@
 export const CATEGORIES = [
-  "Crystal",
-  "Sword",
+  "DiamondSMP",
+  "DiamondPot",
+  "NetheriteSMP",
+  "NetheritePot",
   "Mace",
-  "Axe",
-  "NethPot",
-  "Diapot",
+  "SpearMace",
   "UHC",
+  "Sword",
+  "Axe",
+  "Cart",
+  "Crystal",
   "SMP",
-  "Hydro",
-  "Bedwars",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
+
+export const CATEGORY_LABELS: Record<Category, string> = {
+  DiamondSMP: "Diamond SMP",
+  DiamondPot: "Diamond Pot",
+  NetheriteSMP: "Netherite SMP",
+  NetheritePot: "Netherite Pot",
+  Mace: "Mace",
+  SpearMace: "Spear Mace",
+  UHC: "UHC",
+  Sword: "Sword",
+  Axe: "Axe",
+  Cart: "Cart",
+  Crystal: "Crystal",
+  SMP: "SMP",
+};
 
 export const TIERS = [
   "HT1",
