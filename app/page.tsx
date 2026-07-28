@@ -25,7 +25,7 @@ export default async function HomePage() {
       <header className="mb-10 flex items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-5xl sm:text-6xl text-bone">
-            CrestTiers
+            BPTIERS
           </h1>
           <p className="mt-2 text-sm text-ash">
             Bedrock PvP tier rankings across {CATEGORIES.length} gamemodes.
