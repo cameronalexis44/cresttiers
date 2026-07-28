@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "CrestTiers",
+  title: "BPtiers",
   description: "A community PvP ranking board",
   themeColor: "#3b82f6",
 };

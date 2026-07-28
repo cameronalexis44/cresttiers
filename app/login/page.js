@@ -9,9 +9,9 @@ export default function LoginPage({ searchParams }) {
     <main>
       <div className="auth-card">
         <div className="brand" style={{ marginBottom: 18 }}>
-          <div className="crest"><span>CT</span></div>
+          <div className="crest"><span>BP</span></div>
           <div>
-            <h1 className="pixel" style={{ fontSize: 13, margin: 0 }}>CRESTTIERS</h1>
+            <h1 className="pixel" style={{ fontSize: 13, margin: 0 }}>BPTIERS</h1>
           </div>
         </div>
 

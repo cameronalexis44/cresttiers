@@ -18,9 +18,9 @@ export default async function Home() {
     <>
       <header className="top">
         <div className="brand">
-          <div className="crest"><span>CT</span></div>
+          <div className="crest"><span>BP</span></div>
           <div>
-            <h1 className="pixel">CRESTTIERS</h1>
+            <h1 className="pixel">BPTIERS</h1>
             <p>a PvP ranking board — ranked by category, no combat XP required</p>
           </div>
         </div>
