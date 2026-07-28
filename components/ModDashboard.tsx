@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { CATEGORIES, TIERS } from "@/lib/constants";
 
 type Player = {
@@ -63,7 +64,7 @@ export default function ModDashboard() {
   }
 
   async function handleLogout() {
-    await fetch("/api/mod/logout", { method: "POST" });
+    await signOut({ redirect: false });
     router.refresh();
   }
 
@@ -75,7 +76,7 @@ export default function ModDashboard() {
           onClick={handleLogout}
           className="notch-sm border border-white/10 px-3 py-2 text-sm text-ash hover:text-bone hover:border-crimson-bright transition-colors"
         >
-          Lock
+          Sign out
         </button>
       </div>
 
