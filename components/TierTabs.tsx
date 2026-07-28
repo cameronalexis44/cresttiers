@@ -15,6 +15,32 @@ export type PlayerRow = {
 
 const TABS = ["Overall", ...CATEGORIES] as const;
 
+const TAB_ICONS: Record<string, string> = {
+  Overall: "\u{1F3C6}",
+  Crystal: "\u{1F52E}",
+  Sword: "\u{2694}\u{FE0F}",
+  Mace: "\u{1F528}",
+  Axe: "\u{1FA93}",
+  NethPot: "\u{1F9EA}",
+  Diapot: "\u{1F48E}",
+  UHC: "\u{2764}\u{FE0F}",
+  SMP: "\u{1F3D5}\u{FE0F}",
+  Hydro: "\u{1F30A}",
+  Bedwars: "\u{1F6CF}\u{FE0F}",
+  Pot: "\u{1F9EA}",
+  Vanilla: "\u{1F33F}",
+  Elytra: "\u{1FAB6}",
+  Bow: "\u{1F3F9}",
+  Speed: "\u{1F4A8}",
+  Creeper: "\u{1F4A5}",
+  Manhunt: "\u{1F3C3}",
+  OGVanilla: "\u{1F33F}",
+};
+
+function iconFor(tab: string) {
+  return TAB_ICONS[tab] ?? "\u{1F3AE}";
+}
+
 export default function TierTabs({ players }: { players: PlayerRow[] }) {
   const [active, setActive] = useState<string>("Overall");
 
@@ -54,12 +80,15 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
             <button
               key={tab}
               onClick={() => setActive(tab)}
-              className={`notch-sm border px-3 py-2 text-xs uppercase tracking-widest transition-colors ${
+              className={`notch-sm flex min-w-[84px] flex-col items-center gap-1 border px-3 py-2 text-xs uppercase tracking-widest transition-colors ${
                 isActive
                   ? "border-crimson-bright bg-crimson text-bone"
                   : "border-white/10 bg-panel/60 text-ash hover:text-bone hover:border-crimson-bright"
               }`}
             >
+              <span aria-hidden className="text-lg leading-none">
+                {iconFor(tab)}
+              </span>
               {tab}
             </button>
           );
@@ -79,7 +108,7 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
                 region={entry.region}
                 subtitle={`${entry.score.ranked} gamemode${
                   entry.score.ranked === 1 ? "" : "s"
-                } ranked · ${entry.score.points} pts`}
+                } ranked \u00B7 ${entry.score.points} pts`}
                 tier={entry.score.tier}
               />
             ))}
@@ -128,7 +157,7 @@ function Row({
           <p className="text-bone font-semibold truncate">
             {ign}
             {region ? (
-              <span className="text-ash font-normal"> · {region}</span>
+              <span className="text-ash font-normal"> &middot; {region}</span>
             ) : null}
           </p>
           <p className="text-xs text-ash truncate">{subtitle}</p>
