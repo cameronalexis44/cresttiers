@@ -107,6 +107,16 @@ function Bedwars(props: IconProps) {
   );
 }
 
+export function Trophy(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M7 4h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V4Z" />
+      <path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10M17 5h3v1.5A3.5 3.5 0 0 1 16.5 10" />
+      <path d="M12 13v3.5M9 20.5h6M9.5 20.5c0-1.8.6-2.7 2.5-3 1.9.3 2.5 1.2 2.5 3" />
+    </svg>
+  );
+}
+
 export const CATEGORY_ICONS: Record<Category, (props: IconProps) => React.JSX.Element> = {
   Crystal,
   Sword,
