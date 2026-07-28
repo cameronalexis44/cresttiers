@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isAdminEmail } from "@/lib/admin";
+import { hasValidModSession } from "@/lib/mod-auth";
 import { CATEGORIES, TIERS } from "@/lib/constants";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  if (!isAdminEmail(session?.user?.email)) {
-    return NextResponse.json({ error: "Admin access required." }, { status: 403 });
+  if (!hasValidModSession()) {
+    return NextResponse.json({ error: "Mod access required." }, { status: 403 });
   }
 
   const body = await req.json().catch(() => null);
@@ -39,9 +36,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  if (!isAdminEmail(session?.user?.email)) {
-    return NextResponse.json({ error: "Admin access required." }, { status: 403 });
+  if (!hasValidModSession()) {
+    return NextResponse.json({ error: "Mod access required." }, { status: 403 });
   }
 
   await prisma.player.delete({ where: { id: params.id } });
