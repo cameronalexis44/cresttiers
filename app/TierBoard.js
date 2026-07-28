@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { CATEGORIES, TIER_ORDER, TIER_LABEL, tierColor, totalPoints } from "@/lib/tiers";
+import GameIcon from "@/lib/gameIcons";
 
 export default function TierBoard({ players }) {
   const [activeTab, setActiveTab] = useState("overall");
@@ -16,11 +17,13 @@ export default function TierBoard({ players }) {
     <>
       <nav className="tabs">
         <button className={activeTab === "overall" ? "active" : ""} onClick={() => setActiveTab("overall")}>
-          Overall
+          <GameIcon type="overall" />
+          <span>Overall</span>
         </button>
         {CATEGORIES.map((c) => (
           <button key={c.key} className={activeTab === c.key ? "active" : ""} onClick={() => setActiveTab(c.key)}>
-            {c.label}
+            <GameIcon type={c.key} />
+            <span>{c.label}</span>
           </button>
         ))}
       </nav>
