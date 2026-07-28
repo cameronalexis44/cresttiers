@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CATEGORIES, TIERS, type Category } from "@/lib/constants";
+import { CATEGORY_ICONS } from "@/components/icons";
 
 type Player = {
   id: string;
@@ -48,19 +49,23 @@ export default function TierBoard() {
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-8">
-        {CATEGORIES.map((c) => (
-          <button
-            key={c}
-            onClick={() => setCategory(c)}
-            className={`notch-sm px-4 py-2 text-sm font-semibold tracking-wide border transition-colors ${
-              c === category
-                ? "bg-crimson border-crimson-bright text-bone"
-                : "border-white/10 text-ash hover:text-bone hover:border-white/30"
-            }`}
-          >
-            {c}
-          </button>
-        ))}
+        {CATEGORIES.map((c) => {
+          const Icon = CATEGORY_ICONS[c];
+          return (
+            <button
+              key={c}
+              onClick={() => setCategory(c)}
+              className={`notch-sm flex flex-col items-center gap-1.5 px-4 py-3 min-w-[84px] border transition-colors ${
+                c === category
+                  ? "bg-crimson border-crimson-bright text-bone"
+                  : "border-white/10 text-ash hover:text-bone hover:border-white/30"
+              }`}
+            >
+              <Icon className="w-6 h-6" />
+              <span className="text-xs font-semibold tracking-wide">{c}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="space-y-3">

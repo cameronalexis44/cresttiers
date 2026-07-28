@@ -1,11 +1,14 @@
 export const CATEGORIES = [
   "Crystal",
   "Sword",
+  "Mace",
   "Axe",
-  "Pot",
   "NethPot",
+  "Diapot",
   "UHC",
   "SMP",
+  "Hydro",
+  "Bedwars",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
