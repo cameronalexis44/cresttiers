@@ -92,8 +92,8 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
               onClick={() => setActive(tab)}
               className={`notch-sm flex min-w-[84px] flex-col items-center gap-1 border px-3 py-2 text-xs uppercase tracking-widest transition-colors ${
                 isActive
-                  ? "border-crimson-bright bg-crimson text-bone"
-                  : "border-white/10 bg-panel/60 text-ash hover:text-bone hover:border-crimson-bright"
+                  ? "border-transparent bg-gradient-to-br from-azure via-azure-deep to-crimson text-bone shadow-glow-blue"
+                  : "border-white/10 bg-panel/60 text-ash hover:text-bone hover:border-azure-bright"
               }`}
             >
               <span aria-hidden className="text-lg leading-none">
@@ -167,14 +167,15 @@ function PlayerProfile({
     <div>
       <button
         onClick={onBack}
-        className="notch-sm mb-6 inline-flex items-center gap-2 border border-white/10 bg-panel/60 px-3 py-2 text-xs uppercase tracking-widest text-ash transition-colors hover:text-bone hover:border-crimson-bright"
+        className="notch-sm mb-6 inline-flex items-center gap-2 border border-azure/40 bg-azure/10 px-3 py-2 text-xs uppercase tracking-widest text-azure-bright transition-colors hover:text-bone hover:border-crimson-bright hover:bg-crimson/10"
       >
         &larr; Back to rankings
       </button>
 
-      <div className="notch bg-panel border border-white/10 p-6 mb-6">
+      <div className="notch bg-panel/80 border border-white/10 p-6 mb-6 relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-azure-bright via-white/40 to-crimson-bright" />
         <p className="text-xs uppercase tracking-widest text-ash">Player</p>
-        <h2 className="font-display text-3xl text-bone mt-1">
+        <h2 className="font-display text-3xl text-duotone mt-1">
           {ign}
           {region ? (
             <span className="text-ash text-lg font-normal"> &middot; {region}</span>
@@ -241,11 +242,11 @@ function Row({
     <Wrapper
       onClick={onClick}
       className={`notch-sm flex w-full items-center justify-between gap-4 bg-panel/60 border border-white/10 px-4 py-3 text-left ${
-        onClick ? "transition-colors hover:border-crimson-bright hover:bg-panel" : ""
+        onClick ? "transition-all hover:border-azure-bright hover:bg-panel hover:shadow-glow-red" : ""
       }`}
     >
       <div className="flex items-center gap-4 min-w-0">
-        <span className="font-display text-2xl text-crimson-bright w-10 shrink-0">
+        <span className="font-display text-2xl text-azure-bright w-10 shrink-0 drop-shadow-[0_0_10px_rgba(96,165,250,0.55)]">
           {rank}
         </span>
         <div className="min-w-0">

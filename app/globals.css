@@ -9,9 +9,17 @@
 
 html,
 body {
-  background-color: #0B0A0C;
+  background-color: #07091A;
   color: #EDE8E4;
   font-family: var(--font-mono);
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 700px at 12% -10%, rgba(37, 99, 235, 0.28), transparent 60%),
+    radial-gradient(1000px 700px at 100% 0%, rgba(225, 29, 72, 0.22), transparent 60%),
+    radial-gradient(900px 600px at 50% 110%, rgba(109, 40, 217, 0.18), transparent 60%);
+  background-attachment: fixed;
 }
 
 @layer components {
@@ -20,5 +28,14 @@ body {
   }
   .notch-sm {
     clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+  }
+  .text-duotone {
+    background: linear-gradient(90deg, #60A5FA 0%, #EDE8E4 50%, #FF3B5C 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .border-duotone {
+    border-image: linear-gradient(90deg, #60A5FA, #FF3B5C) 1;
   }
 }
