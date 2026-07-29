@@ -37,7 +37,7 @@ function iconFor(tab: string) {
 
 function labelFor(tab: string) {
   if (tab === "Overall") return "Overall";
-  return CATEGORY_LABELS?.[tab] ?? tab;
+  return (CATEGORY_LABELS as Record<string, string>)[tab] ?? tab;
 }
 
 export default function TierTabs({ players }: { players: PlayerRow[] }) {
