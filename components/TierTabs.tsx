@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CATEGORIES, TIERS } from "@/lib/constants";
+import { CATEGORIES, CATEGORY_LABELS, TIERS } from "@/lib/constants";
 import type { Tier } from "@/lib/constants";
 import { TIER_EMOJI, computeOverall } from "@/lib/scoring";
 
@@ -17,32 +17,32 @@ const TABS = ["Overall", ...CATEGORIES] as const;
 
 const TAB_ICONS: Record<string, string> = {
   Overall: "\u{1F3C6}",
-  Crystal: "\u{1F52E}",
-  Sword: "\u{2694}\u{FE0F}",
+  DiamondSMP: "\u{1F48E}",
+  DiamondPot: "\u{1F9EA}",
+  NetheriteSMP: "\u{1F5FF}",
+  NetheritePot: "\u{2697}\u{FE0F}",
   Mace: "\u{1F528}",
-  Axe: "\u{1FA93}",
-  NethPot: "\u{1F9EA}",
-  Diapot: "\u{1F48E}",
+  SpearMace: "\u{1F3F9}",
   UHC: "\u{2764}\u{FE0F}",
+  Sword: "\u{2694}\u{FE0F}",
+  Axe: "\u{1FA93}",
+  Cart: "\u{1F6E0}\u{FE0F}",
+  Crystal: "\u{1F52E}",
   SMP: "\u{1F3D5}\u{FE0F}",
-  Hydro: "\u{1F30A}",
-  Bedwars: "\u{1F6CF}\u{FE0F}",
-  Pot: "\u{1F9EA}",
-  Vanilla: "\u{1F33F}",
-  Elytra: "\u{1FAB6}",
-  Bow: "\u{1F3F9}",
-  Speed: "\u{1F4A8}",
-  Creeper: "\u{1F4A5}",
-  Manhunt: "\u{1F3C3}",
-  OGVanilla: "\u{1F33F}",
 };
 
 function iconFor(tab: string) {
   return TAB_ICONS[tab] ?? "\u{1F3AE}";
 }
 
+function labelFor(tab: string) {
+  if (tab === "Overall") return "Overall";
+  return CATEGORY_LABELS?.[tab] ?? tab;
+}
+
 export default function TierTabs({ players }: { players: PlayerRow[] }) {
   const [active, setActive] = useState<string>("Overall");
+  const [selectedIgn, setSelectedIgn] = useState<string | null>(null);
 
   const overall = useMemo(() => {
     const byPlayer = new Map<
@@ -71,6 +71,16 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
       .sort((a, b) => TIERS.indexOf(a.tier as Tier) - TIERS.indexOf(b.tier as Tier));
   }, [players, active]);
 
+  if (selectedIgn) {
+    return (
+      <PlayerProfile
+        ign={selectedIgn}
+        players={players}
+        onBack={() => setSelectedIgn(null)}
+      />
+    );
+  }
+
   return (
     <>
       <div className="mb-8 flex flex-wrap gap-2">
@@ -89,7 +99,7 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
               <span aria-hidden className="text-lg leading-none">
                 {iconFor(tab)}
               </span>
-              {tab}
+              {labelFor(tab)}
             </button>
           );
         })}
@@ -110,12 +120,13 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
                   entry.score.ranked === 1 ? "" : "s"
                 } ranked \u00B7 ${entry.score.points} pts`}
                 tier={entry.score.tier}
+                onClick={() => setSelectedIgn(entry.ign)}
               />
             ))}
           </div>
         )
       ) : inCategory.length === 0 ? (
-        <EmptyState label={`No players ranked in ${active} yet.`} />
+        <EmptyState label={`No players ranked in ${labelFor(active)} yet.`} />
       ) : (
         <div className="space-y-2">
           {inCategory.map((p, i) => (
@@ -124,13 +135,89 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
               rank={i + 1}
               ign={p.ign}
               region={p.region}
-              subtitle={p.category}
+              subtitle={labelFor(p.category)}
               tier={p.tier as Tier}
+              onClick={() => setSelectedIgn(p.ign)}
             />
           ))}
         </div>
       )}
     </>
+  );
+}
+
+function PlayerProfile({
+  ign,
+  players,
+  onBack,
+}: {
+  ign: string;
+  players: PlayerRow[];
+  onBack: () => void;
+}) {
+  const key = ign.toLowerCase();
+  const entries = players.filter((p) => p.ign.toLowerCase() === key);
+  const region = entries.find((e) => e.region)?.region ?? null;
+  const byCategory = new Map<string, string>();
+  for (const e of entries) byCategory.set(e.category, e.tier);
+  const tiers = entries.map((e) => e.tier as Tier);
+  const score = computeOverall(tiers);
+
+  return (
+    <div>
+      <button
+        onClick={onBack}
+        className="notch-sm mb-6 inline-flex items-center gap-2 border border-white/10 bg-panel/60 px-3 py-2 text-xs uppercase tracking-widest text-ash transition-colors hover:text-bone hover:border-crimson-bright"
+      >
+        &larr; Back to rankings
+      </button>
+
+      <div className="notch bg-panel border border-white/10 p-6 mb-6">
+        <p className="text-xs uppercase tracking-widest text-ash">Player</p>
+        <h2 className="font-display text-3xl text-bone mt-1">
+          {ign}
+          {region ? (
+            <span className="text-ash text-lg font-normal"> &middot; {region}</span>
+          ) : null}
+        </h2>
+        <p className="text-sm text-ash mt-2">
+          Overall {score.tier} {TIER_EMOJI[score.tier]} &middot; {score.ranked} gamemode
+          {score.ranked === 1 ? "" : "s"} ranked &middot; {score.points} pts
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {CATEGORIES.map((cat) => {
+          const tier = byCategory.get(cat);
+          const ranked = Boolean(tier);
+          return (
+            <div
+              key={cat}
+              className="notch-sm flex items-center justify-between gap-4 bg-panel/60 border border-white/10 px-4 py-3"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <span aria-hidden className="text-lg leading-none">
+                  {iconFor(cat)}
+                </span>
+                <p className="text-bone font-semibold truncate">{labelFor(cat)}</p>
+              </div>
+              <div className="text-right shrink-0">
+                {ranked ? (
+                  <>
+                    <p className="text-lg leading-none">
+                      {TIER_EMOJI[tier as Tier]}
+                    </p>
+                    <p className="text-xs text-ash mt-1">{tier}</p>
+                  </>
+                ) : (
+                  <p className="text-xs text-ash">Unranked</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -140,15 +227,23 @@ function Row({
   region,
   subtitle,
   tier,
+  onClick,
 }: {
   rank: number;
   ign: string;
   region: string | null;
   subtitle: string;
   tier: Tier;
+  onClick?: () => void;
 }) {
+  const Wrapper: any = onClick ? "button" : "div";
   return (
-    <div className="notch-sm flex items-center justify-between gap-4 bg-panel/60 border border-white/10 px-4 py-3">
+    <Wrapper
+      onClick={onClick}
+      className={`notch-sm flex w-full items-center justify-between gap-4 bg-panel/60 border border-white/10 px-4 py-3 text-left ${
+        onClick ? "transition-colors hover:border-crimson-bright hover:bg-panel" : ""
+      }`}
+    >
       <div className="flex items-center gap-4 min-w-0">
         <span className="font-display text-2xl text-crimson-bright w-10 shrink-0">
           {rank}
@@ -167,7 +262,7 @@ function Row({
         <p className="text-lg leading-none">{TIER_EMOJI[tier]}</p>
         <p className="text-xs text-ash mt-1">{tier}</p>
       </div>
-    </div>
+    </Wrapper>
   );
 }
 
