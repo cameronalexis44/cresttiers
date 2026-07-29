@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { CATEGORIES, TIERS } from "@/lib/constants";
+import AvatarManager from "@/components/AvatarManager";
 
 type Player = {
   id: string;
@@ -68,6 +69,10 @@ export default function ModDashboard() {
     router.refresh();
   }
 
+  const uniqueIgns = [...new Set(players.map((p) => p.ign))].sort((a, b) =>
+    a.localeCompare(b),
+  );
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
       <div className="flex items-center justify-between mb-8">
@@ -130,6 +135,8 @@ export default function ModDashboard() {
         </button>
         {error && <p className="text-crimson-bright text-sm">{error}</p>}
       </form>
+
+      <AvatarManager igns={uniqueIgns} />
 
       <p className="text-sm text-ash mb-3">
         {loading ? "Loading players…" : `${players.length} player${players.length === 1 ? "" : "s"} ranked`}
