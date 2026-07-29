@@ -17,8 +17,19 @@ async function getPlayers(): Promise<PlayerRow[]> {
   }
 }
 
+async function getAvatars(): Promise<Record<string, string>> {
+  try {
+    const rows = await prisma.playerAvatar.findMany({
+      select: { ign: true, dataUrl: true },
+    });
+    return Object.fromEntries(rows.map((r) => [r.ign, r.dataUrl]));
+  } catch {
+    return {};
+  }
+}
+
 export default async function HomePage() {
-  const players = await getPlayers();
+  const [players, avatars] = await Promise.all([getPlayers(), getAvatars()]);
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-14">
@@ -48,7 +59,7 @@ export default async function HomePage() {
         <div className="mt-6 h-px w-full bg-gradient-to-r from-azure-bright/60 via-white/10 to-crimson-bright/60" />
       </header>
 
-      <TierTabs players={players} />
+      <TierTabs players={players} avatars={avatars} />
     </main>
   );
 }
