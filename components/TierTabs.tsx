@@ -13,6 +13,8 @@ export type PlayerRow = {
   region: string | null;
 };
 
+export type AvatarMap = Record<string, string>;
+
 const TABS = ["Overall", ...CATEGORIES] as const;
 
 const TAB_ICONS: Record<string, string> = {
@@ -40,7 +42,30 @@ function labelFor(tab: string) {
   return (CATEGORY_LABELS as Record<string, string>)[tab] ?? tab;
 }
 
-export default function TierTabs({ players }: { players: PlayerRow[] }) {
+function Avatar({ src, ign }: { src?: string; ign: string }) {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={ign}
+        className="h-10 w-10 shrink-0 notch-sm border border-white/10 object-cover"
+      />
+    );
+  }
+  return (
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center notch-sm border border-white/10 bg-void text-sm font-semibold text-ash">
+      {ign.slice(0, 1).toUpperCase()}
+    </span>
+  );
+}
+
+export default function TierTabs({
+  players,
+  avatars = {},
+}: {
+  players: PlayerRow[];
+  avatars?: AvatarMap;
+}) {
   const [active, setActive] = useState<string>("Overall");
   const [selectedIgn, setSelectedIgn] = useState<string | null>(null);
 
@@ -76,6 +101,7 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
       <PlayerProfile
         ign={selectedIgn}
         players={players}
+        avatars={avatars}
         onBack={() => setSelectedIgn(null)}
       />
     );
@@ -115,6 +141,7 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
                 key={entry.ign}
                 rank={i + 1}
                 ign={entry.ign}
+                avatar={avatars[entry.ign.toLowerCase()]}
                 region={entry.region}
                 subtitle={`${entry.score.ranked} gamemode${
                   entry.score.ranked === 1 ? "" : "s"
@@ -134,6 +161,7 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
               key={p.id}
               rank={i + 1}
               ign={p.ign}
+              avatar={avatars[p.ign.toLowerCase()]}
               region={p.region}
               subtitle={labelFor(p.category)}
               tier={p.tier as Tier}
@@ -149,10 +177,12 @@ export default function TierTabs({ players }: { players: PlayerRow[] }) {
 function PlayerProfile({
   ign,
   players,
+  avatars,
   onBack,
 }: {
   ign: string;
   players: PlayerRow[];
+  avatars: AvatarMap;
   onBack: () => void;
 }) {
   const key = ign.toLowerCase();
@@ -162,6 +192,7 @@ function PlayerProfile({
   for (const e of entries) byCategory.set(e.category, e.tier);
   const tiers = entries.map((e) => e.tier as Tier);
   const score = computeOverall(tiers);
+  const avatar = avatars[key];
 
   return (
     <div>
@@ -174,17 +205,28 @@ function PlayerProfile({
 
       <div className="notch bg-panel/80 border border-white/10 p-6 mb-6 relative overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-azure-bright via-white/40 to-crimson-bright" />
-        <p className="text-xs uppercase tracking-widest text-ash">Player</p>
-        <h2 className="font-display text-3xl text-duotone mt-1">
-          {ign}
-          {region ? (
-            <span className="text-ash text-lg font-normal"> &middot; {region}</span>
+        <div className="flex items-center gap-4">
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={ign}
+              className="h-16 w-16 shrink-0 notch-sm border border-white/10 object-cover"
+            />
           ) : null}
-        </h2>
-        <p className="text-sm text-ash mt-2">
-          Overall {score.tier} {TIER_EMOJI[score.tier]} &middot; {score.ranked} gamemode
-          {score.ranked === 1 ? "" : "s"} ranked &middot; {score.points} pts
-        </p>
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-widest text-ash">Player</p>
+            <h2 className="font-display text-3xl text-duotone mt-1">
+              {ign}
+              {region ? (
+                <span className="text-ash text-lg font-normal"> &middot; {region}</span>
+              ) : null}
+            </h2>
+            <p className="text-sm text-ash mt-2">
+              Overall {score.tier} {TIER_EMOJI[score.tier]} &middot; {score.ranked} gamemode
+              {score.ranked === 1 ? "" : "s"} ranked &middot; {score.points} pts
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -205,9 +247,7 @@ function PlayerProfile({
               <div className="text-right shrink-0">
                 {ranked ? (
                   <>
-                    <p className="text-lg leading-none">
-                      {TIER_EMOJI[tier as Tier]}
-                    </p>
+                    <p className="text-lg leading-none">{TIER_EMOJI[tier as Tier]}</p>
                     <p className="text-xs text-ash mt-1">{tier}</p>
                   </>
                 ) : (
@@ -225,6 +265,7 @@ function PlayerProfile({
 function Row({
   rank,
   ign,
+  avatar,
   region,
   subtitle,
   tier,
@@ -232,6 +273,7 @@ function Row({
 }: {
   rank: number;
   ign: string;
+  avatar?: string;
   region: string | null;
   subtitle: string;
   tier: Tier;
@@ -249,6 +291,7 @@ function Row({
         <span className="font-display text-2xl text-azure-bright w-10 shrink-0 drop-shadow-[0_0_10px_rgba(96,165,250,0.55)]">
           {rank}
         </span>
+        <Avatar src={avatar} ign={ign} />
         <div className="min-w-0">
           <p className="text-bone font-semibold truncate">
             {ign}
