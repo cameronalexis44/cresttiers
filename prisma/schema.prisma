@@ -68,3 +68,11 @@ model Player {
 
   @@index([category])
 }
+
+model PlayerAvatar {
+  ign        String   @id // lowercased IGN key
+  displayIgn String
+  dataUrl    String   // data:image/png;base64,...
+  updatedBy  String?
+  updatedAt  DateTime @updatedAt
+}
