@@ -30,10 +30,15 @@ export async function POST(req: NextRequest) {
   if (typeof ign !== "string" || !ign.trim()) {
     return NextResponse.json({ error: "A player IGN is required." }, { status: 400 });
   }
-  if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
-    return NextResponse.json({ error: "A PNG image is required." }, { status: 400 });
+  const isDataImage = typeof dataUrl === "string" && dataUrl.startsWith("data:image/");
+  const isImageLink = typeof dataUrl === "string" && /^https?:\/\//i.test(dataUrl.trim());
+  if (!isDataImage && !isImageLink) {
+    return NextResponse.json(
+      { error: "A PNG image or an image link is required." },
+      { status: 400 },
+    );
   }
-  if (dataUrl.length > MAX_DATA_URL) {
+  if (isDataImage && dataUrl.length > MAX_DATA_URL) {
     return NextResponse.json({ error: "Image is too large (max ~400KB)." }, { status: 400 });
   }
 
@@ -44,12 +49,12 @@ export async function POST(req: NextRequest) {
     create: {
       ign: key,
       displayIgn: ign.trim(),
-      dataUrl,
+      dataUrl: dataUrl.trim(),
       updatedBy: session?.user?.email ?? null,
     },
     update: {
       displayIgn: ign.trim(),
-      dataUrl,
+      dataUrl: dataUrl.trim(),
       updatedBy: session?.user?.email ?? null,
     },
   });
