@@ -28,6 +28,8 @@ async function fileToSquarePng(file: File): Promise<string> {
 export default function AvatarManager({ igns }: { igns: string[] }) {
   const [avatars, setAvatars] = useState<AvatarRow[]>([]);
   const [ign, setIgn] = useState("");
+  const [mode, setMode] = useState<"upload" | "link">("upload");
+  const [url, setUrl] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +59,30 @@ export default function AvatarManager({ igns }: { igns: string[] }) {
     }
   }
 
+  function handleUrl(value: string) {
+    setUrl(value);
+    setError(null);
+    const trimmed = value.trim();
+    if (!trimmed) {
+      setPreview(null);
+      return;
+    }
+    if (!/^https?:\/\//i.test(trimmed)) {
+      setPreview(null);
+      setError("Paste a full image link starting with http:// or https://");
+      return;
+    }
+    setPreview(trimmed);
+  }
+
+  function switchMode(next: "upload" | "link") {
+    setMode(next);
+    setPreview(null);
+    setError(null);
+    setUrl("");
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!ign.trim() || !preview) return;
@@ -71,6 +97,7 @@ export default function AvatarManager({ igns }: { igns: string[] }) {
     if (res.ok) {
       setIgn("");
       setPreview(null);
+      setUrl("");
       if (fileRef.current) fileRef.current.value = "";
       load();
     } else {
@@ -89,8 +116,26 @@ export default function AvatarManager({ igns }: { igns: string[] }) {
       <div>
         <p className="text-sm text-bone font-semibold">Player pictures</p>
         <p className="text-xs text-ash mt-1">
-          Assign a PNG someone sent you to their name. It shows next to them on the tier list.
+          Upload a PNG someone sent you, or paste an image link you copied from Google. It shows
+          next to them on the tier list.
         </p>
+      </div>
+
+      <div className="flex gap-2">
+        {(["upload", "link"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => switchMode(m)}
+            className={`notch-sm px-3 py-1.5 text-xs uppercase tracking-widest border transition-colors ${
+              mode === m
+                ? "border-azure-bright text-azure-bright bg-azure/10"
+                : "border-white/10 text-ash hover:text-bone"
+            }`}
+          >
+            {m === "upload" ? "Upload PNG" : "Paste link"}
+          </button>
+        ))}
       </div>
 
       <form onSubmit={handleSave} className="space-y-3">
@@ -107,13 +152,22 @@ export default function AvatarManager({ igns }: { igns: string[] }) {
               <option key={i} value={i} />
             ))}
           </datalist>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(e) => handleFile(e.target.files?.[0])}
-            className="notch-sm bg-void border border-white/10 px-3 py-2 text-sm text-ash file:mr-3 file:border-0 file:bg-azure/20 file:px-3 file:py-1 file:text-xs file:uppercase file:tracking-widest file:text-azure-bright"
-          />
+          {mode === "upload" ? (
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={(e) => handleFile(e.target.files?.[0])}
+              className="notch-sm bg-void border border-white/10 px-3 py-2 text-sm text-ash file:mr-3 file:border-0 file:bg-azure/20 file:px-3 file:py-1 file:text-xs file:uppercase file:tracking-widest file:text-azure-bright"
+            />
+          ) : (
+            <input
+              value={url}
+              onChange={(e) => handleUrl(e.target.value)}
+              placeholder="https://example.com/head.png"
+              className="notch-sm bg-void border border-white/10 px-3 py-2 text-sm text-bone placeholder:text-ash/60 focus:border-azure-bright outline-none"
+            />
+          )}
         </div>
 
         {preview ? (
@@ -121,6 +175,7 @@ export default function AvatarManager({ igns }: { igns: string[] }) {
             <img
               src={preview}
               alt="Preview"
+              onError={() => setError("That link didn't load as an image.")}
               className="h-12 w-12 notch-sm border border-white/10 object-cover"
             />
             <span className="text-xs text-ash">Preview</span>
